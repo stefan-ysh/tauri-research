@@ -1,40 +1,21 @@
-// 创建 vue 实例
-import { createApp } from "vue";
-// 创建 pinia 状态管理的构造函数
-import { createPinia } from "pinia";
-// 应用入口组件
+import { createApp, provide } from "vue";
 import App from "./App.vue";
-// 路由
-import router from "./router";
-// UI 组件
-import ElementPlus from "element-plus";
-import "element-plus/dist/index.css";
-import "@/assets/theme.css";
-// UI 图标
-import * as ElementPlusIconsVue from "@element-plus/icons-vue";
-import "./assets/scss/index.scss";
-// 设置组件中文显示，如日历的一周从周一开始等，默认为一周从周日开始
-// import zhCn from "element-plus/es/locale/lang/zh-cn";
-// import "dayjs/locale/zh-cn";
-// app.use(ElementPlus, {
-//   locale: zhCn,
-// });
+import { createPinia } from "pinia";
+// Vuetify
+import "vuetify/styles";
+import { createVuetify } from "vuetify";
+import * as components from "vuetify/components";
+import * as directives from "vuetify/directives";
+import { setupCalendar } from "v-calendar";
 
-// 安全策略设置 https://blog.csdn.net/hwytree/article/details/121287531
-// process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
-// 创建 pinia 状态管理实例
+const defaultTheme = localStorage.getItem("theme") || "light";
 const pinia = createPinia();
-// 创建应用
-const app = createApp(App);
-// 注册 ui 图标
-for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-  app.component(key, component);
-}
 
-// 挂载路由
-app.use(router);
-// 挂载 pinia 状态管理
-app.use(pinia);
-// 挂载 ui 组件库
-app.use(ElementPlus);
-app.mount("#app");
+const vuetify = createVuetify({
+  components,
+  directives,
+  theme: { defaultTheme },
+});
+const app = createApp(App);
+// Use calendar defaults (optional)
+app.use(setupCalendar, {}).use(pinia).use(vuetify).mount("#app");

@@ -1,52 +1,106 @@
-<template>
-  <div class="layout flex flex-col">
-    <div v-if="permission.isExpired" class="expired-wrap">
-      <img src="@/assets/expired_remind_pic.png" />
-      <el-button @click="closeWindow">关闭</el-button>
-    </div>
-    <Home v-else />
-  </div>
-</template>
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import Home from "./views/Home.vue";
-import { permissionStore } from "./stores";
-// 设置 store
-import { settingStore } from "./stores";
-const permission = permissionStore();
-permission.setExpiredFlag();
-// 接收到主进程的 resize 事件
-// electron.ipcRenderer.on("resizeEvent", (event, message) => {
-//   // 业务处理
-//   console.log("[ `主进程 resize 了` ] >", `主进程 resize 了`);
-// });
-// 关闭
-const closeWindow = () => {
-  // electron.ipcRenderer.send("close");
+import { useTheme } from "vuetify";
+import { computed, ref } from "vue";
+import { useThemeStore } from "./stores";
+import Calendar from "./views/Calendar.vue";
+// import { Calendar } from "v-calendar";
+// import "v-calendar/style.css";
+
+const themeStore = useThemeStore();
+const theme = useTheme();
+const msg = ref("hello world");
+const changeMsg = () => {
+  msg.value = "welcome";
 };
-// 初始化主题
-const setting = settingStore();
-setting.initTheme();
+
+const date = ref(new Date());
+const selectedColor = ref("red");
+// 切换主题值
+const toggleTheme = computed({
+  get() {
+    return theme.global.current.value.dark;
+  },
+  set() {
+    theme.global.name.value = theme.global.current.value.dark
+      ? "light"
+      : "dark";
+  },
+});
+
+// 改变主题并修改store
+const changeTheme = (e: any) => {
+  // 获取switch 值
+  const value = e.target.checked;
+  const t = value ? "dark" : "light";
+  // 切换主题
+  themeStore.changeTheme(t);
+};
+const items = [
+  { title: "item 1" },
+  { title: "item 2" },
+  { title: "item 3" },
+  { title: "item 4" },
+];
+const handleMenu = (item: any) => {
+  console.log(item);
+};
 </script>
 
-<style lang="less" scoped>
-.layout {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  height: 100vh;
-  .expired-wrap {
-    -webkit-app-region: drag;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
-    img {
-      width: 90%;
-    }
-  }
-}
-</style>
+<template>
+  <v-app>
+    <v-card color="grey-lighten-4" flat rounded="0">
+      <v-toolbar density="compact">
+        <v-menu>
+          <template v-slot:activator="{ props }">
+            <v-btn icon="mdi-dots-vertical" v-bind="props"></v-btn>
+          </template>
+
+          <v-list>
+            <v-list-item
+              v-for="(item, i) in items"
+              :key="i"
+              @click="handleMenu(item)"
+            >
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+        <v-spacer></v-spacer>
+        <v-btn icon>
+          <v-switch @change="changeTheme" v-model="toggleTheme" hide-details />
+        </v-btn>
+        <v-btn icon>
+          <v-icon>mdi-window-minimize</v-icon>
+        </v-btn>
+        <v-btn icon>
+          <v-icon>mdi-window-maximize</v-icon>
+        </v-btn>
+        <v-btn icon>
+          <v-icon>mdi-window-restore</v-icon>
+        </v-btn>
+        <v-btn icon>
+          <v-icon>mdi-window-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+    </v-card>
+
+    <!-- <v-btn @click="changeMsg" prepend-icon="mdi-account" variant="plain">
+      Button
+      <v-icon>mdi-account</v-icon>
+    </v-btn> -->
+    <v-main>
+      <!-- <v-text-field v-model="msg" /> -->
+      <!-- show-weeknumbers="left-outside" -->
+      <Calendar />
+      <!-- <Calendar
+        expanded
+        view="monthly"
+        show-weeknumbers
+        :color="selectedColor"
+        title-position="left"
+        :is-dark="themeStore.theme === 'dark'"
+        v-model="date"
+      /> -->
+    </v-main>
+  </v-app>
+</template>
