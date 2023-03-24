@@ -7,7 +7,6 @@ import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { setupCalendar } from "v-calendar";
-
 const defaultTheme = localStorage.getItem("theme") || "light";
 const pinia = createPinia();
 

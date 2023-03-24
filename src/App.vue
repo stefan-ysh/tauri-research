@@ -69,7 +69,7 @@ const handleMenu = (item: any) => {
         <v-btn icon>
           <v-switch @change="changeTheme" v-model="toggleTheme" hide-details />
         </v-btn>
-        <v-btn icon>
+        <!-- <v-btn icon>
           <v-icon>mdi-window-minimize</v-icon>
         </v-btn>
         <v-btn icon>
@@ -80,7 +80,7 @@ const handleMenu = (item: any) => {
         </v-btn>
         <v-btn icon>
           <v-icon>mdi-window-close</v-icon>
-        </v-btn>
+        </v-btn> -->
       </v-toolbar>
     </v-card>
 
